@@ -15,8 +15,18 @@ def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     ''
     """
     ciphertext = ""
-    # PUT YOUR CODE HERE
-    return ciphertext
+alpha=list(plaintext)
+for letter in alpha:
+    letter=ord(letter)
+    if (letter > ord('A') and letter <= ord('Z') or (letter >= ord('a')) and letter <= ord('z') ):
+    if (letter > ord('Z') - shift) and (letter <= ord('Z')):
+         letter -=26
+    elif (letter > (ord('z') - shift)) and (letter <= ord('z')):
+        letter-= 26
+         letter += shift
+         letter = chr(letter)
+         ciphertext = ciphertext + letter
+return ciphertext
 
 
 def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
@@ -33,7 +43,17 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     ''
     """
     plaintext = ""
-    # PUT YOUR CODE HERE
+    alpha= list(plaintext)
+    for letter in alpha:
+        letter=ord(letter)
+        if (letter >= ord('A') and letter <= ord('Z')) or (letter >= ord('a') and letter <= ord ('z')):
+            if (letter >= ord('A') and letter < (ord('A') + shift)):
+                letter += 26
+            elif (letter >= ord('a') and letter <= (ord('a') + shift)):
+                letter += 26
+                letter -= shift
+                letter = chr(letter)
+                plaintext=plaintext + letter
     return plaintext
 
 
@@ -42,5 +62,15 @@ def caesar_breaker_brute_force(ciphertext: str, dictionary: tp.Set[str]) -> int:
     Brute force breaking a Caesar cipher.
     """
     best_shift = 0
-    # PUT YOUR CODE HERE
+    for key in range (len(letters)):
+        translated=''
+        for symbol in message:
+            if symbol in letters:
+                num=letters.find(symbol)
+                num=num-key
+                if num<0:
+                    num=num+len(letters)
+                    translated=translated+symbol
+
+
     return best_shift
