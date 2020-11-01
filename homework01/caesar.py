@@ -15,18 +15,18 @@ def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     ''
     """
     ciphertext = ""
-alpha=list(plaintext)
-for letter in alpha:
-    letter=ord(letter)
-    if (letter > ord('A') and letter <= ord('Z') or (letter >= ord('a')) and letter <= ord('z') ):
-    if (letter > ord('Z') - shift) and (letter <= ord('Z')):
-         letter -=26
-    elif (letter > (ord('z') - shift)) and (letter <= ord('z')):
-        letter-= 26
-         letter += shift
-         letter = chr(letter)
-         ciphertext = ciphertext + letter
-return ciphertext
+    alpha = list(plaintext)
+    for letter in alpha:
+        letter = ord(letter)
+    if ('A' <= letter <= 'Z') or ('a' <= letter <= 'z'):
+        if ('Z' <= letter <= 'Z') - shift:
+            letter -= 26
+        elif ('z' <= letter <= 'z') - shift:
+            letter -= 26
+            letter += shift
+            letter = chr(letter)
+            ciphertext += letter
+    return ciphertext
 
 
 def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
@@ -43,17 +43,17 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     ''
     """
     plaintext = ""
-    alpha= list(plaintext)
+    alpha = list(plaintext)
     for letter in alpha:
-        letter=ord(letter)
-        if (letter >= ord('A') and letter <= ord('Z')) or (letter >= ord('a') and letter <= ord ('z')):
-            if (letter >= ord('A') and letter < (ord('A') + shift)):
+        letter = ord(letter)
+        if ('A' <= letter <= 'Z') or ('a' <= letter <= 'z'):
+            if ('A' <= letter <= 'A') + shift:
                 letter += 26
-            elif (letter >= ord('a') and letter <= (ord('a') + shift)):
+            elif ('a' <= letter <= 'a') + shift:
                 letter += 26
                 letter -= shift
                 letter = chr(letter)
-                plaintext=plaintext + letter
+                plaintext += letter
     return plaintext
 
 
@@ -61,16 +61,16 @@ def caesar_breaker_brute_force(ciphertext: str, dictionary: tp.Set[str]) -> int:
     """
     Brute force breaking a Caesar cipher.
     """
+    letters = ciphertext
     best_shift = 0
-    for key in range (len(letters)):
-        translated=''
-        for symbol in message:
+    for key in range(len(letters)):
+        translated = ''
+        for symbol in dictionary:
             if symbol in letters:
-                num=letters.find(symbol)
-                num=num-key
-                if num<0:
-                    num=num+len(letters)
-                    translated=translated+symbol
-
+                num = letters.find(symbol)
+                num -= key
+                if num < 0:
+                    num += len(letters)
+                    translated += symbol
 
     return best_shift
