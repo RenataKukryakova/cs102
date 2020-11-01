@@ -4,7 +4,6 @@ import typing as tp
 def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     """
     Encrypts plaintext using a Caesar cipher.
-
     >>> encrypt_caesar("PYTHON")
     'SBWKRQ'
     >>> encrypt_caesar("python")
@@ -18,21 +17,20 @@ def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     alpha = list(plaintext)
     for letter in alpha:
         letter = ord(letter)
-    if ('A' <= letter <= 'Z') or ('a' <= letter <= 'z'):
-        if ('Z' <= letter <= 'Z') - shift:
-            letter -= 26
-        elif ('z' <= letter <= 'z') - shift:
-            letter -= 26
-            letter += shift
-            letter = chr(letter)
-            ciphertext += letter
+        if ('A' <= letter <= 'Z') or ('a' <= letter <= 'z'):
+            if ('Z' <= letter <= 'Z') - shift:
+                letter -= 26
+            elif ('z' <= letter <= 'z') - shift:
+                letter -= 26
+                letter += shift
+                letter = chr(letter)
+                ciphertext = ciphertext + letter
     return ciphertext
 
 
 def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     """
     Decrypts a ciphertext using a Caesar cipher.
-
     >>> decrypt_caesar("SBWKRQ")
     'PYTHON'
     >>> decrypt_caesar("sbwkrq")
@@ -53,7 +51,7 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
                 letter += 26
                 letter -= shift
                 letter = chr(letter)
-                plaintext += letter
+                plaintext = plaintext + letter
     return plaintext
 
 
@@ -72,5 +70,4 @@ def caesar_breaker_brute_force(ciphertext: str, dictionary: tp.Set[str]) -> int:
                 if num < 0:
                     num += len(letters)
                     translated += symbol
-
     return best_shift
