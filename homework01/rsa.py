@@ -13,14 +13,17 @@ def is_prime(n: int) -> bool:
     >>> is_prime(8)
     False
     """
-    if n % 2 == 0:
+    if n <= 3:
+        return n > 1
+    elif n % 2 == 0 or n % 3 == 0:
         return False
     else:
-        b = 3
-        while b * b <= n and n % b != 0:
-            b += 2
-            return b * b > n
-
+        b = 5
+        while b * b <= n:
+            if n % b == 0 or n % (b + 2) == 0:
+                return False
+            b += 6
+        return True
 
 
 def gcd(a: int, b: int) -> int:
@@ -32,13 +35,10 @@ def gcd(a: int, b: int) -> int:
     >>> gcd(3, 7)
     1
     """
-    while a != 0 and b != 0:
-        if a > b:
-            a %= b
-        else:
-            b %= a
-            return max(a, b)
-
+    if b == 0:
+        return a
+    else:
+        return gcd(b, a % b)
 
 
 def multiplicative_inverse(e: int, phi: int) -> int:
@@ -49,37 +49,12 @@ def multiplicative_inverse(e: int, phi: int) -> int:
     >>> multiplicative_inverse(7, 40)
     23
     """
-    l = []
-    for l in range(2):
-        l.append([0] * 6)
-        z = 0
-        while e % phi >= 0:
-            l[z][0] = max(e, phi)
-            l[z][1] = min(e, phi)
-            l[z][2] = l[z][0] % l[z][1]
-            l[z][3] = l[z][0] // l[z][1]
-            phi = l[z][0] % l[z][1]
-            e = l[z][1]
-            l += 1
-            l.append([0] * 6)
-            if phi == 0:
-                break
-                l.pop(-1)
-                l.pop(-1)
-                print(l)
-                l[-1][4]
-                l[-1][5]
-                print(l)
-                l[-1][4] = 0
-                l[-1][5] = 1
-                z -= 2
-                for i in range(len(l) - 1):
-                    l[z][4] = l[z + 1][5]
-                    l[z][5] = l[z + 1][4] - l[z + 1][5] * l[z][3]
-                    z -= 1
-                    o = l[0][5] % l[0][0]
-                    return o
+    e = e % phi
+    for i in range(1, phi):
+        if (e * i) % phi == 1:
+            return i
 
+    return 0
 
 
 def generate_keypair(p: int, q: int) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[int, int]]:
@@ -91,9 +66,8 @@ def generate_keypair(p: int, q: int) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[in
     # n = pq
     n = p * q
 
-
     # phi = (p-1)(q-1)
-    phi = (p-1) * (q-1)
+    phi = (p - 1) * (q - 1)
 
     # Choose an integer e such that e and phi(n) are coprime
     e = random.randrange(1, phi)

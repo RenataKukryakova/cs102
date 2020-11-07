@@ -14,17 +14,19 @@ def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     ''
     """
     ciphertext = ""
-    alpha = list(plaintext)
-    for letter in alpha:
-        letter = ord(letter)
-        if ('A' <= letter <= 'Z') or ('a' <= letter <= 'z'):
-            if ('Z' <= letter <= 'Z') - shift:
-                letter -= 26
-            elif ('z' <= letter <= 'z') - shift:
-                letter -= 26
-                letter += shift
-                letter = chr(letter)
-                ciphertext = ciphertext + letter
+    for letter in plaintext:
+        if ("A" <= letter <= "Z") or ("a" <= letter <= "z"):
+            if ("A" <= letter <= "Z") and chr(ord(letter) + shift) > "Z":
+                letter = chr(ord(letter) - 26 + shift)
+                ciphertext += letter
+            elif ("a" <= letter <= "z") and chr(ord(letter) + shift) > "z":
+                letter = chr(ord(letter) - 26 + shift)
+                ciphertext += letter
+            else:
+                letter = chr(ord(letter) + shift)
+                ciphertext += letter
+        else:
+            ciphertext += letter
     return ciphertext
 
 
@@ -41,17 +43,19 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     ''
     """
     plaintext = ""
-    alpha = list(plaintext)
-    for letter in alpha:
-        letter = ord(letter)
-        if ('A' <= letter <= 'Z') or ('a' <= letter <= 'z'):
-            if ('A' <= letter <= 'A') + shift:
-                letter += 26
-            elif ('a' <= letter <= 'a') + shift:
-                letter += 26
-                letter -= shift
-                letter = chr(letter)
-                plaintext = plaintext + letter
+    for letter in ciphertext:
+        if ("A" <= letter <= "Z") or ("a" <= letter <= "z"):
+            if ("A" <= letter <= "Z") and chr(ord(letter) - shift) < "A":
+                letter = chr(ord(letter) + 26 - shift)
+                plaintext += letter
+            elif ("a" <= letter <= "z") and chr(ord(letter) - shift) < "a":
+                letter = chr(ord(letter) + 26 - shift)
+                plaintext += letter
+            else:
+                letter = chr(ord(letter) - shift)
+                plaintext += letter
+        else:
+            plaintext += letter
     return plaintext
 
 
@@ -59,15 +63,14 @@ def caesar_breaker_brute_force(ciphertext: str, dictionary: tp.Set[str]) -> int:
     """
     Brute force breaking a Caesar cipher.
     """
-    letters = ciphertext
     best_shift = 0
-    for key in range(len(letters)):
-        translated = ''
+    for key in range(len(ciphertext)):
+        translated = ""
         for symbol in dictionary:
-            if symbol in letters:
-                num = letters.find(symbol)
+            if symbol in ciphertext:
+                num = ciphertext.find(symbol)
                 num -= key
                 if num < 0:
-                    num += len(letters)
+                    num += len(ciphertext)
                     translated += symbol
     return best_shift
