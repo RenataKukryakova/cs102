@@ -16,8 +16,7 @@ def display(grid: List[List[str]]) -> None:
     for row in range(9):
         print(
             "".join(
-                grid[row][col].center(width) + ("|" if str(col) in "25" else "")
-                for col in range(9)
+                grid[row][col].center(width) + ("|" if str(col) in "25" else "") for col in range(9)
             )
         )
         if str(row) in "25":
@@ -33,9 +32,7 @@ def group(values: List[str], n: int) -> List[List[str]]:
     >>> group([1,2,3,4,5,6,7,8,9], 3)
     [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     """
-    le = len(values)
-    gr = [values[i : i + n] for i in range(0, le, n)]
-    return gr
+    return [values[i : i + n] for i in range(0, len(values), n)]
 
 
 def get_row(grid: List[List[str]], pos: Tuple[int, int]) -> List[str]:
@@ -76,10 +73,7 @@ def get_block(grid: List[List[str]], pos: Tuple[int, int]) -> List[str]:
     br = 3 * (row // 3)
     bc = 3 * (col // 3)
     x = []
-    for i in range(3):
-        for j in range(3):
-            x.append(grid[br + i][bc + j])
-    return x
+    return [x.append(grid[br + i][bc + j]) for i in range for j in range]
 
 
 def find_empty_positions(grid: List[List[str]]) -> Optional[Tuple[int, int]]:
@@ -94,7 +88,7 @@ def find_empty_positions(grid: List[List[str]]) -> Optional[Tuple[int, int]]:
     for i in range(len(grid)):
         for l in range(len(grid)):
             if grid[i][l] == ".":
-                return (i, l)
+                return i, l
     return None
 
 
@@ -138,7 +132,7 @@ def solve(grid: List[List[str]]) -> Optional[List[List[str]]]:
         if solution:
             return solution
     grid[row][column] = "."
-    return []
+    return None
 
 
 def check_solution(solution: List[List[str]]) -> bool:
