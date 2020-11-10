@@ -185,7 +185,7 @@ def generate_sudoku(N: int) -> List[List[str]]:
     True
     """
 
-    grid = solve([["."] * 9 for _ in range(9)])   # type: ignore
+    grid = solve([["."] * 9 for _ in range(9)])  # type: ignore
     N = 81 - min(81, N)
     while N:
         row = random.randint(0, 8)
