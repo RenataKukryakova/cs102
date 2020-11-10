@@ -73,7 +73,7 @@ def get_block(grid: List[List[str]], pos: Tuple[int, int]) -> List[str]:
     row, col = pos
     br = 3 * (row // 3)
     bc = 3 * (col // 3)
-    return [grid[br + i][bc + j] for i in range for j in range]
+    return [grid[br + i][bc + j] for i in range(3) for j in range(3)]
 
 
 def find_empty_positions(grid: List[List[str]]) -> Optional[Tuple[int, int]]:
