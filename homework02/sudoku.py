@@ -184,6 +184,8 @@ def generate_sudoku(N: int) -> List[List[str]]:
     >>> check_solution(solution)
     True
     """
+
+
     grid = solve([["."] * 9 for _ in range(9)])   # type: ignore
     N = 81 - min(81, N)
     while N:
