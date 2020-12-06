@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 
+import life
 from life import GameOfLife
 from ui import UI
 
@@ -14,12 +15,24 @@ class GUI(UI):
         self.height = self.life.rows * cell_size
         self.screen = pygame.display.set_mode((self.width, self.height))
 
+    def change_state(self, cell: life.Cell) -> None:
+        cell_a = cell[0] // self.cell_size
+        cell_b = cell[1] // self.cell_size
+        if self.life.curr_generation[cell_a][cell_b]:
+            self.life.curr_generation[cell_a][cell_b] = 0
+        else:
+            self.life.curr_generation[cell_a][cell_b] = 1
+
     def draw_lines(self) -> None:
         # Copy from previous assignment
         for x in range(0, self.width, self.cell_size):
-            pygame.draw.line(self.screen, pygame.Color("black"), (x, 0), (x, self.height))
+            pygame.draw.line(
+                self.screen, pygame.Color("black"), (x, 0), (x, self.height)
+            )
         for y in range(0, self.height, self.cell_size):
-            pygame.draw.line(self.screen, pygame.Color("black"), (0, y), (self.width, y))
+            pygame.draw.line(
+                self.screen, pygame.Color("black"), (0, y), (self.width, y)
+            )
         return None
 
     def draw_grid(self) -> None:

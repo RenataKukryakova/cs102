@@ -47,7 +47,7 @@ class GameOfLife:
     def get_neighbours(self, cell: Cell) -> Cells:
         # Copy from previous assignment
         x, y = cell
-        cells: [
+        cells = [
             (x - 1, y),
             (x - 1, y + 1),
             (x, y + 1),
@@ -61,7 +61,7 @@ class GameOfLife:
         for x, y in cells:
             if 0 <= x < self.cols and 0 <= y < self.rows:
                 neighbours.append(self.curr_generation[y % self.rows][x % self.cols])
-                return neighbours
+        return neighbours
 
     def get_next_generation(self) -> Grid:
         # Copy from previous assignment
@@ -91,7 +91,7 @@ class GameOfLife:
         """
         Не превысило ли текущее число поколений максимально допустимое.
         """
-        return self.generations >= self.max_generations
+        return self.generations == self.max_generations
 
     @property
     def is_changing(self) -> bool:
@@ -118,4 +118,4 @@ class GameOfLife:
         Сохранить текущее состояние клеток в указанный файлW.
         """
         with open(filename, "w") as l:
-            json.dump(self.curr_generationpy, fp=l)
+            json.dump(self.curr_generation, fp=l)
