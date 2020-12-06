@@ -18,12 +18,11 @@ Grid = List[Cells]
 
 
 class GameOfLife:
-    
     def __init__(
         self,
         size: Tuple[int, int],
-        randomize: bool=True,
-        max_generations: Optional[float]=float('inf')
+        randomize: bool = True,
+        max_generations: Optional[float] = float("inf"),
     ) -> None:
         # Размер клеточного поля
         self.rows, self.cols = size
@@ -36,15 +35,14 @@ class GameOfLife:
         # Текущее число поколений
         self.generations = 1
 
-    def create_grid(self, randomize: bool=False) -> Grid:
+    def create_grid(self, randomize: bool = False) -> Grid:
         # Copy from previous assignment
         grid = [[0 for _ in range(self.cols)] for _ in range(self.rows)]
         if randomize:
             for l in range(len(grid)):
                 for k in range(len(grid[0])):
-                    grid[l][k] = random.randint(0,1)
+                    grid[l][k] = random.randint(0, 1)
         return grid
-
 
     def get_neighbours(self, cell: Cell) -> Cells:
         # Copy from previous assignment
@@ -65,7 +63,6 @@ class GameOfLife:
                 neighbours.append(self.curr_generation[y % self.rows][x % self.cols])
                 return neighbours
 
-
     def get_next_generation(self) -> Grid:
         # Copy from previous assignment
         another_grid = self.create_grid()
@@ -76,10 +73,9 @@ class GameOfLife:
                     if near == 3:
                         another_grid[l][k] = 1
                 else:
-                    if  near == 2 or near == 3:
+                    if near == 2 or near == 3:
                         another_grid[l][k] = 1
         return another_grid
-
 
     def step(self) -> None:
         """
@@ -89,7 +85,6 @@ class GameOfLife:
             self.prev_generation = self.curr_generation
             self.curr_generation = self.get_next_generation()
             self.generations += 1
-
 
     @property
     def is_max_generations_exceeded(self) -> bool:
@@ -106,7 +101,7 @@ class GameOfLife:
         return self.prev_generation != self.curr_generation
 
     @staticmethod
-    def from_file(filename: pathlib.Path) -> 'GameOfLife':
+    def from_file(filename: pathlib.Path) -> "GameOfLife":
         """
         Прочитать состояние клеток из указанного файла.
         """
@@ -118,7 +113,7 @@ class GameOfLife:
         game.curr_generation = grid
         return game
 
-    def save(self,filename: pathlib.Path) -> None:
+    def save(self, filename: pathlib.Path) -> None:
         """fp
         Сохранить текущее состояние клеток в указанный файлW.
         """
