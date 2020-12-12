@@ -34,17 +34,18 @@ class GameOfLife:
                 for _ in range(self.rows)
             ]
         else:
-            return [
-                [0 for _ in range(self.cols)]
-                for _ in range(self.rows)
-            ]
+            return [[0 for _ in range(self.cols)] for _ in range(self.rows)]
 
     def get_neighbours(self, cell: Cell) -> Cells:
         neighbours = []
         row, col = cell
         for l in [-1, 0, 1]:
             for k in [-1, 0, 1]:
-                if 0 <= row + l < self.rows and 0 <= col + k < self.cols and (l, k) != (0, 0):
+                if (
+                    0 <= row + l < self.rows
+                    and 0 <= col + k < self.cols
+                    and (l, k) != (0, 0)
+                ):
                     neighbours.append(self.curr_generation[row + l][col + k])
         return neighbours
 
