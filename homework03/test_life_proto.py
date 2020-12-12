@@ -1,112 +1,114 @@
+import json
+import os
 import random
-import typing as tp
+import unittest
+from unittest.mock import MagicMock
 
-import pygame
-from pygame.locals import *
+import life_proto
 
-Cell = tp.Tuple[int, int]
-Cells = tp.List[int]
-Grid = tp.List[Cells]
+life_proto.pygame.display = MagicMock()
 
 
-class GameOfLife:
-    def __init__(
-        self, width: int = 640, height: int = 480, cell_size: int = 10, speed: int = 10
-    ) -> None:
-        self.width = width
-        self.height = height
-        self.cell_size = cell_size
+class TestGameOfLife(unittest.TestCase):
+    def setUp(self):
+        self.grid = [
+            [1, 1, 0, 0, 1, 1, 1, 1],
+            [0, 1, 1, 1, 1, 1, 1, 0],
+            [1, 0, 1, 1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 1, 1, 0, 0],
+            [1, 1, 1, 1, 0, 1, 1, 1],
+        ]
+        self.height = 6
+        self.width = 8
 
-        # Устанавливаем размер окна
-        self.screen_size = width, height
-        # Создание нового окна
-        self.screen = pygame.display.set_mode(self.screen_size)
+    def test_can_create_an_empty_grid(self):
+        game = life_proto.GameOfLife(width=3, height=3, cell_size=1)
+        grid = game.create_grid(randomize=False)
+        self.assertEqual([[0, 0, 0], [0, 0, 0], [0, 0, 0]], grid)
 
-        # Вычисляем количество ячеек по вертикали и горизонтали
-        self.cell_width = self.width // self.cell_size
-        self.cell_height = self.height // self.cell_size
+    def test_can_create_a_random_grid(self):
+        game = life_proto.GameOfLife(width=3, height=3, cell_size=1)
+        random.seed(12345)
+        grid = game.create_grid(randomize=True)
+        self.assertEqual([[1, 0, 1], [1, 0, 1], [1, 0, 1]], grid)
 
-        # Скорость протекания игры
-        self.speed = speed
+    def test_get_neighbours(self):
+        game = life_proto.GameOfLife(width=self.width, height=self.height, cell_size=1)
+        game.grid = self.grid
+        neighbours = game.get_neighbours((2, 3))
+        self.assertEqual(8, len(neighbours))
+        self.assertEqual(4, sum(neighbours))
 
-    def draw_lines(self) -> None:
-        """ Отрисовать сетку """
-        for x in range(0, self.width, self.cell_size):
-            pygame.draw.line(self.screen, pygame.Color("black"), (x, 0), (x, self.height))
-        for y in range(0, self.height, self.cell_size):
-            pygame.draw.line(self.screen, pygame.Color("black"), (0, y), (self.width, y))
+    def test_get_neighbours_for_upper_left_corner(self):
+        game = life_proto.GameOfLife(width=self.width, height=self.height, cell_size=1)
+        game.grid = self.grid
+        neighbours = game.get_neighbours((0, 0))
+        self.assertEqual(3, len(neighbours))
+        self.assertEqual(2, sum(neighbours))
 
-    def run(self) -> None:
-        """ Запустить игру """
-        pygame.init()
-        clock = pygame.time.Clock()
-        pygame.display.set_caption("Game of Life")
-        self.screen.fill(pygame.Color("white"))
+    def test_get_neighbours_for_upper_right_corner(self):
+        game = life_proto.GameOfLife(width=self.width, height=self.height, cell_size=1)
+        game.grid = self.grid
+        neighbours = game.get_neighbours((0, 7))
+        self.assertEqual(3, len(neighbours))
+        self.assertEqual(2, sum(neighbours))
 
-        # Создание списка клеток
-        # PUT YOUR CODE HERE
+    def test_get_neighbours_for_lower_left_corner(self):
+        game = life_proto.GameOfLife(width=self.width, height=self.height, cell_size=1)
+        game.grid = self.grid
+        neighbours = game.get_neighbours((5, 0))
+        self.assertEqual(3, len(neighbours))
+        self.assertEqual(2, sum(neighbours))
 
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    running = False
-            self.draw_lines()
+    def test_get_neighbours_for_lower_right_corner(self):
+        game = life_proto.GameOfLife(width=self.width, height=self.height, cell_size=1)
+        game.grid = self.grid
+        neighbours = game.get_neighbours((5, 7))
+        self.assertEqual(3, len(neighbours))
+        self.assertEqual(1, sum(neighbours))
 
-            # Отрисовка списка клеток
-            # Выполнение одного шага игры (обновление состояния ячеек)
-            # PUT YOUR CODE HERE
+    def test_get_neighbours_for_upper_side(self):
+        game = life_proto.GameOfLife(width=self.width, height=self.height, cell_size=1)
+        game.grid = self.grid
+        neighbours = game.get_neighbours((0, 3))
+        self.assertEqual(5, len(neighbours))
+        self.assertEqual(4, sum(neighbours))
 
-            pygame.display.flip()
-            clock.tick(self.speed)
-        pygame.quit()
+    def test_get_neighbours_for_bottom_side(self):
+        game = life_proto.GameOfLife(width=self.width, height=self.height, cell_size=1)
+        game.grid = self.grid
+        neighbours = game.get_neighbours((5, 3))
+        self.assertEqual(5, len(neighbours))
+        self.assertEqual(4, sum(neighbours))
 
-    def create_grid(self, randomize: bool = False) -> Grid:
-        """
-        Создание списка клеток.
-        Клетка считается живой, если ее значение равно 1, в противном случае клетка
-        считается мертвой, то есть, ее значение равно 0.
-        Parameters
-        ----------
-        randomize : bool
-            Если значение истина, то создается матрица, где каждая клетка может
-            быть равновероятно живой или мертвой, иначе все клетки создаются мертвыми.
-        Returns
-        ----------
-        out : Grid
-            Матрица клеток размером `cell_height` х `cell_width`.
-        """
-        pass
+    def test_get_neighbours_for_left_side(self):
+        game = life_proto.GameOfLife(width=self.width, height=self.height, cell_size=1)
+        game.grid = self.grid
+        neighbours = game.get_neighbours((2, 0))
+        self.assertEqual(5, len(neighbours))
+        self.assertEqual(2, sum(neighbours))
 
-    def draw_grid(self) -> None:
-        """
-        Отрисовка списка клеток с закрашиванием их в соответствующе цвета.
-        """
-        pass
+    def test_get_neighbours_for_right_side(self):
+        game = life_proto.GameOfLife(width=self.width, height=self.height, cell_size=1)
+        game.grid = self.grid
+        neighbours = game.get_neighbours((2, 7))
+        self.assertEqual(5, len(neighbours))
+        self.assertEqual(2, sum(neighbours))
 
-    def get_neighbours(self, cell: Cell) -> Cells:
-        """
-        Вернуть список соседних клеток для клетки `cell`.
-        Соседними считаются клетки по горизонтали, вертикали и диагоналям,
-        то есть, во всех направлениях.
-        Parameters
-        ----------
-        cell : Cell
-            Клетка, для которой необходимо получить список соседей. Клетка
-            представлена кортежем, содержащим ее координаты на игровом поле.
-        Returns
-        ----------
-        out : Cells
-            Список соседних клеток.
-        """
-        pass
+    def test_can_update(self):
+        game = life_proto.GameOfLife(width=self.width, height=self.height, cell_size=1)
+        game.grid = self.grid
 
-    def get_next_generation(self) -> Grid:
-        """
-        Получить следующее поколение клеток.
-        Returns
-        ----------
-        out : Grid
-            Новое поколение клеток.
-        """
-        pass
+        tests_dir = os.path.dirname(__file__)
+        steps_path = os.path.join(tests_dir, "steps.txt")
+        with open(steps_path) as f:
+            steps = json.load(f)
+
+        num_updates = 0
+        for step in sorted(steps.keys(), key=int):
+            with self.subTest(step=step):
+                for _ in range(int(step) - num_updates):
+                    game.grid = game.get_next_generation()
+                    num_updates += 1
+                self.assertEqual(steps[step], game.grid)
