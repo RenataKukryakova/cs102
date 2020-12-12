@@ -17,8 +17,8 @@ class Console(UI):
 
     def draw_grid(self, screen) -> None:
         """ Отобразить состояние клеток. """
-        for l in range(1, self.rows - 1):
-            for k in range(1, self.cols - 1):
+        for l in range(1, self.life.rows - 1):
+            for k in range(1, self.life.cols - 1):
                 if self.life.curr_generation[l][k]:
                     bam = "*"
                 else:
