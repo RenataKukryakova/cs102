@@ -1,16 +1,7 @@
-import random
-import json
-from copy import deepcopy
-
+import copy
 import pathlib
-from itertools import product
+import random
 from typing import List, Optional, Tuple
-
-# pylint: disable=no-member
-# pylint: disable=missing-class-docstring
-# pylint: disable=missing-module-docstring
-# pylint: disable=missing-function-docstring
-
 
 Cell = Tuple[int, int]
 Cells = List[int]
@@ -36,55 +27,39 @@ class GameOfLife:
         self.generations = 1
 
     def create_grid(self, randomize: bool = False) -> Grid:
-        # Copy from previous assignment
-        grid = [[0 for _ in range(self.cols)] for _ in range(self.rows)]
-        if randomize:
-            for l in range(len(grid)):
-                for k in range(len(grid[0])):
-                    grid[l][k] = random.randint(0, 1)
-        return grid
+
+        if randomize == True:
+            return [[random.randint(0, 1) for x in range(self.cols)] for _ in range(self.rows)]
+        else:
+            return [[0 for _ in range(self.cols)] for _ in range(self.rows)]
 
     def get_neighbours(self, cell: Cell) -> Cells:
-        # Copy from previous assignment
-        x, y = cell
-        cells = [
-            (x - 1, y),
-            (x - 1, y + 1),
-            (x, y + 1),
-            (x + 1, y + 1),
-            (x + 1, y),
-            (x + 1, y + 1),
-            (x, y - 1),
-            (x - 1, y - 1),
-        ]
         neighbours = []
-        for x, y in cells:
-            if 0 <= x < self.cols and 0 <= y < self.rows:
-                neighbours.append(self.curr_generation[y % self.rows][x % self.cols])
+        row, col = cell
+        for l in [-1, 0, 1]:
+            for k in [-1, 0, 1]:
+                if 0 <= row + l < self.rows and 0 <= col + k < self.cols and (l, k) != (0, 0):
+                    neighbours.append(self.curr_generation[row + l][col + k])
         return neighbours
 
     def get_next_generation(self) -> Grid:
-        # Copy from previous assignment
-        another_grid = self.create_grid()
-        for l in range(self.rows):
-            for k in range(self.cols):
-                near = self.get_neighbours((l, k)).count(1)
-                if self.curr_generation[l][k] == 0:
-                    if near == 3:
-                        another_grid[l][k] = 1
-                else:
-                    if near == 2 or near == 3:
-                        another_grid[l][k] = 1
-        return another_grid
+        new_gen = self.create_grid(False)
+        for x in range(self.rows):
+            for y in range(self.cols):
+                new_neighbours = self.get_neighbours((x, y)).count(1)
+                if self.curr_generation[x][y] == 0 and new_neighbours == 3:
+                    new_gen[x][y] = 1
+                elif self.curr_generation[x][y] == 1 and new_neighbours in [2, 3]:
+                    new_gen[x][y] = 1
+        return new_gen
 
     def step(self) -> None:
         """
         Выполнить один шаг игры.
         """
-        if not self.is_max_generations_exceeded:
-            self.prev_generation = self.curr_generation
-            self.curr_generation = self.get_next_generation()
-            self.generations += 1
+        self.prev_generation = self.curr_generation[:]
+        self.curr_generation = self.get_next_generation()
+        self.generations += 1
 
     @property
     def is_max_generations_exceeded(self) -> bool:
@@ -106,16 +81,18 @@ class GameOfLife:
         Прочитать состояние клеток из указанного файла.
         """
         with open(filename) as file:
-            grid = [[int(l) for l in row] for row in file]
-            rows, cols = len(grid), len(grid[0])
+            grid = [[int(x) for x in list(rw)] for rw in file.readline()]
+        row, col = len(grid), len(grid[0])
 
-        game = GameOfLife((rows, cols))
+        game = GameOfLife((row, col))
         game.curr_generation = grid
         return game
 
     def save(self, filename: pathlib.Path) -> None:
-        """fp
-        Сохранить текущее состояние клеток в указанный файлW.
         """
-        with open(filename, "w") as l:
-            json.dump(self.curr_generation, fp=l)
+        Сохранить текущее состояние клеток в указанный файл.
+        """
+        with open(filename) as file:
+            for row in self.curr_generation:
+                file.write("".join([str(x) for x in row]))
+                file.write("\n")
