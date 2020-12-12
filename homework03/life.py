@@ -29,9 +29,15 @@ class GameOfLife:
     def create_grid(self, randomize: bool = False) -> Grid:
 
         if randomize == True:
-            return [[random.randint(0, 1) for x in range(self.cols)] for _ in range(self.rows)]
+            return [
+                [random.randint(0, 1) for x in range(self.cols)]
+                for _ in range(self.rows)
+            ]
         else:
-            return [[0 for _ in range(self.cols)] for _ in range(self.rows)]
+            return [
+                [0 for _ in range(self.cols)]
+                for _ in range(self.rows)
+            ]
 
     def get_neighbours(self, cell: Cell) -> Cells:
         neighbours = []
