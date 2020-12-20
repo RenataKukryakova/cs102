@@ -86,7 +86,9 @@ class GameOfLife:
                 for _ in range(self.cell_height)
             ]
         else:
-            return [[0 for _ in range(self.cell_width)] for _ in range(self.cell_height)]
+            return [
+                [0 for _ in range(self.cell_width)] for _ in range(self.cell_height)
+            ]
 
     def draw_grid(self) -> None:
         """
