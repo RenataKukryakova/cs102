@@ -26,7 +26,7 @@ class Console(UI):
                 screen.addch(l, k, bam)
 
     def run(self) -> None:
-        screen = curses.initscr().derwin(26,26,0,0)
+        screen = curses.initscr().derwin(26, 26, 0, 0)
         curses.curs_set(0)
         running = True
         while running:
@@ -42,7 +42,8 @@ class Console(UI):
         screen.getch()
         curses.endwin()
 
+
 if __name__ == "__main__":
- life = GameOfLife((15, 30), randomize=True)
- ui = Console(life, save_path=pathlib.Path("fileui.txt"))
- ui.run()
+    life = GameOfLife((15, 30), randomize=True)
+    ui = Console(life, save_path=pathlib.Path("fileui.txt"))
+    ui.run()
