@@ -17,8 +17,8 @@ class Console(UI):
 
     def draw_grid(self, screen) -> None:
         """ Отобразить состояние клеток. """
-        for l in range(1, self.life.rows - 1):
-            for k in range(1, self.life.cols - 1):
+        for l in range(1, len(self.life.curr_generation) - 1):
+            for k in range(1, len(self.life.curr_generation[l]) - 1):
                 if self.life.curr_generation[l][k]:
                     bam = "*"
                 else:
@@ -26,7 +26,7 @@ class Console(UI):
                 screen.addch(l, k, bam)
 
     def run(self) -> None:
-        screen = curses.initscr()
+        screen = curses.initscr().derwin(26,26,0,0)
         curses.curs_set(0)
         running = True
         while running:
@@ -37,12 +37,12 @@ class Console(UI):
             if self.life.is_max_generations_exceeded:
                 running = False
             screen.refresh()
-            time.sleep(2)
+            time.sleep(0.5)
 
         screen.getch()
         curses.endwin()
 
-    if __name__ == "__main__":
-        life = GameOfLife((15, 30), randomize=True)
-        ui = Console(life, save_path=pathlib.Path("fileui.txt"))
-        ui.run()
+if __name__ == "__main__":
+ life = GameOfLife((15, 30), randomize=True)
+ ui = Console(life, save_path=pathlib.Path("fileui.txt"))
+ ui.run()

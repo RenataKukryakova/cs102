@@ -47,6 +47,17 @@ class GUI(UI):
                             k * self.cell_size + 1,
                             self.cell_size - 1,
                             self.cell_size - 1,
+                        )
+                    )
+                else:
+                    pygame.draw.rect(
+                        self.screen,
+                        pygame.Colur("white"),
+                        pygame.Rect(
+                            l * self.cell_size,
+                            k * self.cell_size,
+                            self.cell_size,
+                            self.cell_size,
                         ),
                     )
 
@@ -82,3 +93,11 @@ class GUI(UI):
             pygame.display.flip()
             clock.tick(self.speed)
         pygame.quit()
+
+def main():
+ game = GameOfLife(size=(48, 64))
+ app = GUI(game)
+ app.run()
+
+if __name__ == "__main__":
+ main()
