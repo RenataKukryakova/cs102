@@ -26,7 +26,9 @@ class Console(UI):
                 screen.addch(l, k, bam)
 
     def run(self) -> None:
-        screen = curses.initscr().derwin(len(self.life.curr_generation), len(self.life.curr_generation[0]), 0, 0)
+        screen = curses.initscr().derwin(
+            len(self.life.curr_generation), len(self.life.curr_generation[0]), 0, 0
+        )
         curses.curs_set(0)
         running = True
         while running:
