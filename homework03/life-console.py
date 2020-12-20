@@ -26,7 +26,7 @@ class Console(UI):
                 screen.addch(l, k, bam)
 
     def run(self) -> None:
-        screen = curses.initscr()
+        screen = curses.initscr().derwin(26, 26, 0, 0)
         len(self.life.curr_generation)
         len(self.life.curr_generation[0])
         curses.curs_set(0)
