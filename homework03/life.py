@@ -42,9 +42,9 @@ class GameOfLife:
         for l in [-1, 0, 1]:
             for k in [-1, 0, 1]:
                 if (
-                     0 <= row + l < self.rows
-                     and 0 <= col + k < self.cols
-                     and (l, k) != (0, 0)
+                    0 <= row + l < self.rows
+                    and 0 <= col + k < self.cols
+                    and (l, k) != (0, 0)
                 ):
                     neighbours.append(self.curr_generation[row + l][col + k])
         return neighbours
