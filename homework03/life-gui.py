@@ -43,19 +43,19 @@ class GUI(UI):
                         self.screen,
                         pygame.Color("green"),
                         (
-                            l * self.cell_size + 1,
-                            k * self.cell_size + 1,
-                            self.cell_size - 1,
-                            self.cell_size - 1,
+                            k * self.cell_size,
+                            l * self.cell_size,
+                            self.cell_size,
+                            self.cell_size,
                         ),
                     )
                 else:
                     pygame.draw.rect(
                         self.screen,
-                        pygame.Colur("white"),
+                        pygame.Color("white"),
                         pygame.Rect(
-                            l * self.cell_size,
                             k * self.cell_size,
+                            l * self.cell_size,
                             self.cell_size,
                             self.cell_size,
                         ),
