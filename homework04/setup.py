@@ -1,5 +1,4 @@
 from setuptools import setup
-
 import pyvcs
 
 AUTHOR = "Dmitrii Sorokin"
