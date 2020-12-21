@@ -48,13 +48,11 @@ class GitIndexEntry(tp.NamedTuple):
 
     @staticmethod
     def unpack(data: bytes) -> "GitIndexEntry":
-        index_unpacked_things = struct.unpack(
-            "!LLLLLLLLLL20sH" + str(len(data) - 62) + "s", data
-        )
+        index_unpacked_things = struct.unpack("!LLLLLLLLLL20sH" + str(len(data) - 62) + "s", data)
         return GitIndexEntry(
             *(
-                    list(index_unpacked_things[:-1])
-                    + [index_unpacked_things[-1].rstrip(b"\00").decode()]
+                list(index_unpacked_things[:-1])
+                + [index_unpacked_things[-1].rstrip(b"\00").decode()]
             )
         )
 
@@ -70,7 +68,7 @@ def read_index(gitdir: pathlib.Path) -> tp.List[GitIndexEntry]:
         for a in range(quantity):
             entry = entries[:62]
             name_len = struct.unpack("!H", entry[60:])[0]
-            name = entries[62: 62 + name_len].decode()
+            name = entries[62 : 62 + name_len].decode()
             (
                 ctime_s,
                 ctime_n,
@@ -101,7 +99,7 @@ def read_index(gitdir: pathlib.Path) -> tp.List[GitIndexEntry]:
                 name,
             )
             ind.append(clas)
-            entries = entries[62 + name_len:]
+            entries = entries[62 + name_len :]
             S = 0
             while entries[:S].replace(b"\x00", b"") == b"":
                 S += 1
@@ -128,11 +126,7 @@ def ls_files(gitdir: pathlib.Path, details: bool = False) -> None:
     for entry in read_index(gitdir):
         if details:
             stage = (entry.flags >> 12) & 3
-            print(
-                "{:6o} {} {:}\t{}".format(
-                    entry.mode, entry.sha1.hex(), stage, entry.path
-                )
-            )
+            print("{:6o} {} {:}\t{}".format(entry.mode, entry.sha1.hex(), stage, entry.path))
         else:
             print(entry.path)
 
