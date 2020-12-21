@@ -12,17 +12,13 @@ from pyvcs.repo import repo_find
 
 def hash_object(data: bytes, fmt: str, write: bool = False) -> str:
     objects = "objects"
-    abd = hashlib.sha1(
-        (fmt + " " + str(len(data))).encode() + b"\00" + data
-    ).hexdigest()
+    abd = hashlib.sha1((fmt + " " + str(len(data))).encode() + b"\00" + data).hexdigest()
     if write:
         gitdir = repo_find()
         if not (gitdir / objects / abd[:2]).exists():
             (gitdir / objects / abd[:2]).mkdir()
         with (gitdir / objects / abd[:2] / abd[2:]).open("wb") as file:
-            file.write(
-                zlib.compress((fmt + " " + str(len(data))).encode() + b"\00" + data)
-            )
+            file.write(zlib.compress((fmt + " " + str(len(data))).encode() + b"\00" + data))
     return abd
 
 
@@ -67,9 +63,9 @@ def read_tree(data: bytes) -> tp.List[tp.Tuple[int, str, str]]:
     while data:
         before_sha_ind = data.index(b"\00")
         mode, name = map(lambda x: x.decode(), data[:before_sha_ind].split(b" "))
-        sha = data[before_sha_ind + 1: before_sha_ind + 21]
+        sha = data[before_sha_ind + 1 : before_sha_ind + 21]
         tree.append((int(mode), name, sha.hex()))
-        data = data[before_sha_ind + 21:]
+        data = data[before_sha_ind + 21 :]
     return tree
 
 
@@ -91,9 +87,9 @@ def find_tree_files(tree_sha: str, gitdir: pathlib.Path) -> tp.List[tp.Tuple[str
     while data:
         before_sha_ind = data.index(b"\00")
         mode, name = map(lambda x: x.decode(), data[:before_sha_ind].split(b" "))
-        sha = data[before_sha_ind + 1: before_sha_ind + 21]
+        sha = data[before_sha_ind + 1 : before_sha_ind + 21]
         tree.append((int(mode), name, sha.hex()))
-        data = data[before_sha_ind + 21:]
+        data = data[before_sha_ind + 21 :]
     return tree
 
 
