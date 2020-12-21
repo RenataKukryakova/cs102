@@ -26,7 +26,6 @@ def resolve_head(gitdir: pathlib.Path) -> tp.Optional[str]:
     return ref_resolve(gitdir, get_ref(gitdir))
 
 
-
 def is_detached(gitdir: pathlib.Path) -> bool:
     HEAD = "HEAD"
     with open(gitdir / HEAD) as file:
