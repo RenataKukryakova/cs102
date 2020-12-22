@@ -12,12 +12,12 @@ from pyvcs.refs import get_ref, is_detached, resolve_head, update_ref  # type: i
 
 def write_tree(gitdir: pathlib.Path, index: tp.List[GitIndexEntry], dirname: str = "") -> str:
     tree_inputs = []
-    for entry in index:
-        _, title = os.path.split(entry.name)
+    for abd in index:
+        _, title = os.path.split(abd.name)
         if dirname:
             titles = dirname.split("/")
         else:
-            titles = entry.name.split("/")
+            titles = abd.name.split("/")
         if len(titles) != 1:
             prefix = titles[0]
             title = f"/".join(titles[1:])
@@ -26,11 +26,11 @@ def write_tree(gitdir: pathlib.Path, index: tp.List[GitIndexEntry], dirname: str
             tree_input += bytes.fromhex(write_tree(gitdir, index, title))
             tree_inputs.append(tree_input)
         else:
-            if dirname and entry.name.find(dirname) == -1:
+            if dirname and abd.name.find(dirname) == -1:
                 continue
-            with open(entry.name, "rb") as file:
+            with open(abd.name, "rb") as file:
                 info = file.read()
-            mode = str(oct(entry.mode))[2:]
+            mode = str(oct(abd.mode))[2:]
             tree_input = f"{mode} {title}\0".encode()
             tree_input += bytes.fromhex(hash_object(info, "blob", write=True))
             tree_inputs.append(tree_input)

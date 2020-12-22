@@ -13,11 +13,11 @@ from pyvcs.tree import commit_tree, write_tree  # type: ignore
 
 
 def add(gitdir: pathlib.Path, paths: tp.List[pathlib.Path]) -> None:
-    for path in paths:
-        if path.is_file():
-            update_index(gitdir, [path], write=True)
-        if path.is_dir():
-            add(gitdir, list(path.glob("*")))
+    for abd in paths:
+        if abd.is_file():
+            update_index(gitdir, [abd], write=True)
+        if abd.is_dir():
+            add(gitdir, list(abd.glob("*")))
 
 
 def commit(gitdir: pathlib.Path, message: str, author: tp.Optional[str] = None) -> str:
@@ -27,9 +27,9 @@ def commit(gitdir: pathlib.Path, message: str, author: tp.Optional[str] = None) 
 
 
 def checkout(gitdir: pathlib.Path, obj_name: str) -> None:
-    for entry in read_index(gitdir):
+    for abd in read_index(gitdir):
         try:
-            os.remove(entry.name)
+            os.remove(abd.name)
         except FileNotFoundError:
             pass
     com = commit_parse(read_object(obj_name, gitdir)[1])
@@ -56,9 +56,9 @@ def checkout(gitdir: pathlib.Path, obj_name: str) -> None:
             com[parse[0]] = parse[1]
         else:
             stopped = True
-    for dir in gitdir.parent.glob("*"):
-        if dir != gitdir and dir.is_dir():
+    for direct in gitdir.parent.glob("*"):
+        if direct != gitdir and direct.is_dir():
             try:
-                os.removedirs(dir)
+                os.removedirs(direct)
             except OSError:
                 continue
