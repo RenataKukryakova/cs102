@@ -27,8 +27,9 @@ def age_predict(user_id: int) -> tp.Optional[float]:
             - bdate.year
             - (
                 now.month < bdate.month
-                or (now.month == bdate.month and now.day < bdate.day))
+                or (now.month == bdate.month and now.day < bdate.day)
             )
+        )
 
     if ages:
         return statistics.median(ages)

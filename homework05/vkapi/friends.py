@@ -19,7 +19,7 @@ def get_friends(
     user_id: int,
     count: int = 5000,
     offset: int = 0,
-    fields: tp.Optional[tp.List[str]] = None
+    fields: tp.Optional[tp.List[str]] = None,
 ) -> FriendsResponse:
     """
     Получить список идентификаторов друзей пользователя или расширенную информацию
