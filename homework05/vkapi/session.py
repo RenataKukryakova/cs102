@@ -38,24 +38,17 @@ class Session:
         backoff_factor: float = 0.3,
     ) -> None:
         super().__init__()
-        self.base_url = base_url
-
-        retry = Retry(
-            total=max_retries,
-            status_forcelist=[429, 500, 502, 503, 504],
-            backoff_factor=backoff_factor,
-            method_whitelist=["HEAD", "GET", "OPTIONS", "POST"],
+        self.retries = Retry(
+            total=max_retries, backoff_factor=backoff_factor, status_forcelist=[500]
         )
+        self.mount(base_url, HTTPAdapter(max_retries=self.retries))
+        self.base_url = base_url
+        self.timeout = timeout
 
-        adapter = TimeoutHTTPAdapter(timeout=timeout, max_retries=retry)
-        self.mount(self.base_url, adapter)
+    def get(self, url: str, *args: tp.Any, **kwargs: tp.Any) -> requests.Response:  # type: ignore
+        kwargs["timeout"] = kwargs.get("timeout", self.timeout)
+        return super().get(f"{self.base_url}/{url}", *args, **kwargs)
 
-    def get(
-        self, url: str, *args: tp.Any, **kwargs: tp.Any
-    ) -> requests.Response:  # type:ignore
-        return super().get(self.base_url + "/" + url, *args, **kwargs)
-
-    def post(
-        self, url: str, *args: tp.Any, **kwargs: tp.Any
-    ) -> requests.Response:  # type:ignore
-        return super().post(self.base_url + "/" + url, *args, **kwargs)
+    def post(self, url: str, *args: tp.Any, **kwargs: tp.Any) -> requests.Response:  # type: ignore
+        kwargs["timeout"] = kwargs.get("timeout", self.timeout)
+        return super().post(f"{self.base_url}/{url}", *args, **kwargs)

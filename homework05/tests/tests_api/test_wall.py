@@ -1,69 +1,87 @@
 import time
 import unittest
-from unittest.mock import patch
-from urllib.parse import unquote
 
-import pandas as pd
+import httpretty
 import responses
-from vkapi.wall import get_wall_execute
+from requests.exceptions import ConnectionError, HTTPError, ReadTimeout, RetryError
+
+from vkapi.session import Session
 
 
-class GetWallTestCase(unittest.TestCase):
+class TestSession(unittest.TestCase):
+    @httpretty.activate
+    def test_max_retries(self):
+        session = Session("https://example.com", max_retries=5, backoff_factor=0)
+        httpretty.register_uri(
+            httpretty.GET,
+            "https://example.com/",
+            responses=[
+                httpretty.Response(
+                    body="",
+                    status=500,
+                ),
+                httpretty.Response(
+                    body="",
+                    status=500,
+                ),
+                httpretty.Response(
+                    body="",
+                    status=500,
+                ),
+            ],
+        )
+        with self.assertRaises(RetryError):
+            _ = session.get("")
+        self.assertEqual(6, len(httpretty.latest_requests()))
+
+    @httpretty.activate
+    def test_backoff_factor(self):
+        backoff_factor = 0.5
+        max_retries = 4
+        total_delay = sum(backoff_factor * (2 ** n) for n in range(1, max_retries))
+
+        session = Session(
+            "https://example.com",
+            max_retries=max_retries,
+            backoff_factor=backoff_factor,
+        )
+        httpretty.register_uri(
+            httpretty.GET,
+            "https://example.com/",
+            responses=[
+                httpretty.Response(
+                    body="",
+                    status=500,
+                )
+                for _ in range(max_retries)
+            ],
+        )
+        start_time = time.time()
+        with self.assertRaises(RetryError):
+            _ = session.get("")
+        end_time = time.time()
+        time_diff = end_time - start_time
+
+        self.assertAlmostEqual(time_diff, total_delay, places=0)
+        self.assertEqual(max_retries + 1, len(httpretty.latest_requests()))
+
     @responses.activate
-    def test_total_count(self):
-        expected_items = [
-            {
-                "id": 1,
-                "from_id": 1234,
-                "owner_id": 1234,
-                "date": 1234567890,
-                "text": "some message",
-            }
-        ]
-        responses.add(
-            responses.POST,
-            "https://api.vk.com/method/execute",
-            json={
-                "response": {
-                    "count": 1,
-                    "items": expected_items,
-                }
-            },
-            status=200,
-        )
-        wall = get_wall_execute(domain="cs102py", count=1)
-        self.assertIsInstance(
-            wall,
-            pd.DataFrame,
-            msg="Функция должна возвращать DataFrame, используйте json_normalize",
-        )
-        self.assertEqual(
-            expected_items,
-            wall.to_dict("records"),
-            msg="Вы должны сделать один запрос, чтобы узнать общее число записей",
-        )
-        resp_body = unquote(responses.calls[0].request.body)
-        self.assertTrue(
-            '"count":"1"' in resp_body or '"count":+"1"' in resp_body,
-            msg="Вы должны сделать один запрос, чтобы узнать общее число записей",
-        )
+    def test_raises_on_timeout_error(self):
+        responses.add(responses.GET, "https://example.com", body=ReadTimeout())
+        session = Session("https://example.com", max_retries=1)
+        with self.assertRaises(ReadTimeout):
+            _ = session.get("")
 
     @responses.activate
-    def test_too_many_requests(self):
-        responses.add(
-            responses.POST,
-            "https://api.vk.com/method/execute",
-            json={
-                "response": {
-                    "count": 6000,
-                    "items": [],
-                }
-            },
-            status=200,
-        )
-        start = time.time()
-        with patch("vkapi.wall.get_posts_2500") as get_posts_2500:
-            get_posts_2500.return_value = []
-            _ = get_wall_execute(domain="cs102py", count=6000)
-        end = time.time()
-        self.assertGreaterEqual(end - start, 2.0, msg="Слишком много запросов в секунду")
+    def test_raises_on_http_error(self):
+        responses.add(responses.GET, "https://example.com", body=HTTPError())
+        session = Session("https://example.com", max_retries=1)
+        with self.assertRaises(HTTPError):
+            _ = session.get("")
+
+    @responses.activate
+    def test_raises_on_server_internal_error(self):
+        responses.add(responses.GET, "https://example.com", body=ConnectionError())
+        session = Session("https://example.com", max_retries=1)
+        with self.assertRaises(ConnectionError):
+            _ = session.get("")
