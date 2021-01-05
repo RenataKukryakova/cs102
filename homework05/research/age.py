@@ -26,8 +26,8 @@ def age_predict(user_id: int) -> tp.Optional[float]:
             now.year
             - bdate.year
             - (
-               now.month < bdate.month
-               or (now.month == bdate.month and now.day < bdate.day)
+                now.month < bdate.month
+                or (now.month == bdate.month and now.day < bdate.day)
             )
         )
 
