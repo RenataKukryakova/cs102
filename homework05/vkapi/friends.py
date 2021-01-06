@@ -31,18 +31,16 @@ def get_friends(
     :param fields: Список полей, которые нужно получить для каждого пользователя.
     :return: Список идентификаторов друзей пользователя или список пользователей.
     """
-    par = {
-        "access_token": VK_CONFIG["access_token"],
-        "v": VK_CONFIG["version"],
-        "count": count,
-        "user_id": user_id if user_id is not None else "",
-        "fields": ",".join(fields) if fields is not None else "",
-        "offset": offset,
-    }
-    resp = session.get("friends.get", params=par)
-    if "error" in resp.json() or not resp.ok:
-        raise APIError(resp.json()["error"]["error_msg"])
-    return FriendsResponse(**resp.json()["response"])
+    response = session.get(
+        "friends.get",
+        params={
+            "user_id": user_id,
+            "count": count,
+            "offset": offset,
+            "fields": fields,
+        },
+    ).json()["response"]
+    return FriendsResponse(count=response["count"], items=response["items"])
 
 
 class MutualFriends(tp.TypedDict):
@@ -54,7 +52,7 @@ class MutualFriends(tp.TypedDict):
 def get_mutual(
     source_uid: tp.Optional[int] = None,
     target_uid: tp.Optional[int] = None,
-    target_uids: tp.Optional[tp.List[int]] = None,
+    target_uids: tp.Optional[tp.List[int]] = None,  # type: ignore
     order: str = "",
     count: tp.Optional[int] = None,
     offset: int = 0,
@@ -107,6 +105,6 @@ def get_mutual(
             )
             for data in response
         )
-        time.sleep(0.5)
+        time.sleep(0.34)
 
     return result
