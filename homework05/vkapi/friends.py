@@ -96,7 +96,7 @@ def get_mutual(
                 "target_uids": ",".join([str(i) for i in target_uids[m : m + 100]]),  # type: ignore
                 "order": order,
                 "count": count,
-                "offset": offset + m,
+                "offset": offset + i,
                 "access_token": config.VK_CONFIG["access_token"],
                 "v": config.VK_CONFIG["version"],
             },
