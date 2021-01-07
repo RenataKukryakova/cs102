@@ -93,7 +93,7 @@ def get_mutual(
             "friends.getMutual",
             params={
                 "source_uid": source_uid,
-                "target_uids": ",".join([str(i) for i in target_uids[m : m + 100]]),  # type: ignore
+                "target_uids": ",".join([str(i) for i in target_uids[i : i + 100]]),  # type: ignore
                 "order": order,
                 "count": count,
                 "offset": offset + i,
@@ -109,6 +109,6 @@ def get_mutual(
             )
             for data in response
         )
-        time.sleep(0.34)
+        time.sleep(0.5)
 
     return result
