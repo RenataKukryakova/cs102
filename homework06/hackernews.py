@@ -67,7 +67,9 @@ def classify_news():
     test = s.query(News).filter(News.label == None).all()
     return template(
         "news_template",
-        rows=sorted(test, key=lambda news: get_weight(model.predict(clean(news.title).lower()))),
+        rows=sorted(
+            test, key=lambda news: get_weight(model.predict(clean(news.title).lower()))
+        ),
     )
 
 
