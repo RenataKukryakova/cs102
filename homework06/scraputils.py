@@ -19,7 +19,9 @@ def extract_news(parser):
     for i in range(len(links)):
         author = subtexts[i].find("a", {"class": "hnuser"})
         comments = extract_first_integer_from_tag(subtexts[i].find_all("a")[-1], "\xa0")
-        points = extract_first_integer_from_tag(subtexts[i].find("span", {"class": "score"}), " ")
+        points = extract_first_integer_from_tag(
+            subtexts[i].find("span", {"class": "score"}), " "
+        )
 
         news.append(
             {
