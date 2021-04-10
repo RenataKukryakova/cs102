@@ -8,7 +8,7 @@ rows = s.query(News).filter(News.label != None).all()
 for row in rows:
     X.append(f"{row.title} {row.author} {row.url}")
     y.append(row.label)
-X_train = X[:735],
+X_train = (X[:735],)
 y_train = y[:735]
 X_test = X[735:]
 y_test = y[735:]
