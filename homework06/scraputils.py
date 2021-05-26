@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup  # type: ignore
 
 
 def extract_news(parser):
-    """ Extract news from a given web page """
+    """Extract news from a given web page"""
 
     def extract_first_integer_from_tag(tag, separator):
         try:
@@ -19,7 +19,9 @@ def extract_news(parser):
     for i in range(len(links)):
         author = subtexts[i].find("a", {"class": "hnuser"})
         comments = extract_first_integer_from_tag(subtexts[i].find_all("a")[-1], "\xa0")
-        points = extract_first_integer_from_tag(subtexts[i].find("span", {"class": "score"}), " ")
+        points = extract_first_integer_from_tag(
+            subtexts[i].find("span", {"class": "score"}), " "
+        )
 
         news.append(
             {
@@ -34,12 +36,12 @@ def extract_news(parser):
 
 
 def extract_next_page(parser):
-    """ Extract next page URL """
+    """Extract next page URL"""
     return parser.find("a", {"class": "morelink"})["href"]
 
 
 def get_news(url, n_pages=1):
-    """ Collect news from a given web page """
+    """Collect news from a given web page"""
     news = []
     while n_pages:
         response = requests.get(url)
